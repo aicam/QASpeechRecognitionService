@@ -14,4 +14,4 @@ mcd = mc[os.environ['MONGODB_DBNAME']]
 
 @app.post("/send/question/")
 async def send_questions(question: QuestionInfo):
-    return create_http_message_response(True, add_QA_document(mcd, question))
+    return create_http_message_response(True, str(add_QA_document(mcd, question)))
