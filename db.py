@@ -1,15 +1,15 @@
 import pymongo
 
-from main import QuestionInfo
+from req_models import *
 
 
 def create_connection(connectionString):
-    myclient = pymongo.MongoClient(connectionString)
+    return pymongo.MongoClient(connectionString)
 
 
 def add_QA_document(mcd, question: QuestionInfo):
     col = mcd[question.doc_name]
     newQA = {'question': question.question, 'answer': question.answer}
-    return col.inset_one(newQA)
+    return col.inset_one(newQA).inserted_id
 
 
