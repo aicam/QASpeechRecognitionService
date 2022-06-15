@@ -9,18 +9,17 @@ prepositions = ['از', 'به', 'در', 'با']
     vocabDict is initiated each time server ran, if there is a vocab.json it is loaded, otherwise it is created
 '''
 class ScoreMatch:
-    def __init__(self):
-        self.vocabCount = 0
-        self.vocabDict = {}
 
+    def __init__(self):
+        self.vocabDict = {}
         if os.path.exists("vocabs.json"):
             with open('vocabs.json', 'r') as openfile:
                 self.vocabDict = json.load(openfile)
 
     def score_vocab(self, vocab):
         if vocab not in self.vocabDict.keys():
-            return 1/len(self.vocabDict.keys())
-        return self.vocabDict[vocab] / np.sum(self.vocabDict.values())
+            return 1
+        return 1 / self.vocabDict[vocab]
 
     def store_sentence(self, sentence):
         vocabs = sentence.split(' ')
