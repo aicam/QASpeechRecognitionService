@@ -1,15 +1,14 @@
 from fastapi import FastAPI
 import os
-from db import *
-from utils import *
-from req_models import *
+from src.db import *
+from src.utils import *
+from src.req_models import *
 
 app = FastAPI()
 
 ## create connection to MongoDB
 mc = create_connection(os.environ['MONGODB_CONNECTION'])
 mcd = mc[os.environ['MONGODB_DBNAME']]
-
 
 
 @app.post("/send/question/")
