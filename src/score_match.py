@@ -1,6 +1,5 @@
 import os
 import json
-import numpy as np
 
 prepositions = ['از', 'به', 'در', 'با']
 

@@ -48,26 +48,17 @@ def DB_add_QA_document(mcd, question: QuestionInfo):
     return col.insert_one(newQA).inserted_id
 
 def DB_get_all_QA(mcd, doc_name = None):
-    qas = []
-    if doc_name == None:
-        collections = [c for c in mcd.list_collection_names() if c != "users"]
-        for collection in collections:
-            for qa in mcd[collection].find():
-                print(qa.keys())
-                newQA = {'question': qa['question'],
-                         'type': qa['type'],
-                         'answer': qa['answer'],
-                         'doc_name': collection}
-                qas.append(newQA)
-        return qas
-    else:
-        for qa in mcd[doc_name].find():
+    qas = {}
+    collections = [c for c in mcd.list_collection_names() if c != "users"] if doc_name == None else [doc_name]
+    for collection in collections:
+        col_qas = []
+        for qa in mcd[collection].find():
             newQA = {'question': qa['question'],
                      'type': qa['type'],
-                     'answer': qa['answer'],
-                     'doc_name': doc_name}
-            qas.append(newQA)
-        return qas
+                     'answer': qa['answer']}
+            col_qas.append(newQA)
+        qas.update({collection: col_qas})
+    return qas
 
 def DB_answer(mcd, sm: ScoreMatch, question: str, doc_name = None):
     # record top score answers in anses

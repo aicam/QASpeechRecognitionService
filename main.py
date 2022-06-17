@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-import os
 from src.db import *
 from src.score_match import ScoreMatch
 from src.utils import *
