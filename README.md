@@ -48,8 +48,7 @@ POST /answer/
     "question": "<question string>"
     "doc_name": "<document name (optional)>"
 }
-"return all questions with highest score in all collections or in
-collection (doc_name) specified."
+"return all questions with highest score in all collections or in collection (doc_name) specified."
 ```
 
 ## Scoring Function
