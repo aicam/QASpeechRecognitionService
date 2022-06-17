@@ -32,12 +32,12 @@ a new question is asked, web service will search over all collections or a speci
 ```http request
 POST /send/question/
 {
-    "question": <question string>,
-    "answer": <answer string>,
+    "question": "<question string>",
+    "answer": "<answer string>",
     "doc_name": <document name string>,
     "type": <type of question (optional)> default = "simple_question"
 }
-add new question and answer to database
+"add new question and answer to database"
 
 GET /get/data/<doc_name (optional)>
 return all questions and answers.
