@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  db:
+    image: mongo
+    container_name: mongo_database
+  web_service:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      - MONGODB_CONNECTION=mongodb://mongo_database:27017/
+      - MONGODB_DBNAME=qa
+      - HASH_KEY=finalproject
+      - ADMIN_USERNAME=mamad
+      - ADMIN_PASSWORD=1234
