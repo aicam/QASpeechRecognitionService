@@ -1,21 +1,27 @@
+import os
+
 import pymongo
 
 from src.req_models import *
 import hashlib
 
+from src.score_match import ScoreMatch
 
-# users table
-def GetUserDict(user: User):
-    return {"username": user.username, "passwprd": user.password, "role": user.role}
 
 def create_connection(connectionString):
     return pymongo.MongoClient(connectionString)
 
+def GetUserDict(user: User):
+    return {"username": user.username, "password": user.password, "role": user.role}
 
-def DB_add_QA_document(mcd, question: QuestionInfo):
-    col = mcd[question.doc_name]
-    newQA = {'type': question.type, 'question': question.question, 'answer': question.answer}
-    return col.insert_one(newQA).inserted_id
+
+# users table
+def DB_initiate_users(mcd):
+    userDB = mcd["users"].find_one()
+    if userDB == None:
+        user = User(username=os.environ["ADMIN_USERNAME"], password=os.environ["ADMIN_PASSWORD"])
+        user.role = "admin"
+        DB_add_user(mcd, user)
 
 def DB_add_user(mcd, user: User):
     newUser = GetUserDict(user)
@@ -32,5 +38,59 @@ def DB_get_user_token_middleware(mcd, hashKey: str, username: str):
     userDB = mcd["users"].find_one({"username": username})
     if userDB == None:
         return ""
-    hashTxt = hashKey + userDB.username + userDB.password
-    return hashlib.md5(hashTxt.encode()).hexdigest()
+    hashTxt = hashKey + userDB['username'] + userDB['password']
+    return hashlib.md5(hashTxt.encode()).hexdigest(), userDB['role']
+
+# QA tables
+def DB_add_QA_document(mcd, question: QuestionInfo):
+    col = mcd[question.doc_name]
+    newQA = {'type': question.type, 'question': question.question, 'answer': question.answer}
+    return col.insert_one(newQA).inserted_id
+
+def DB_get_all_QA(mcd, doc_name = None):
+    qas = []
+    if doc_name == None:
+        collections = [c for c in mcd.list_collection_names() if c != "users"]
+        for collection in collections:
+            for qa in mcd[collection].find():
+                print(qa.keys())
+                newQA = {'question': qa['question'],
+                         'type': qa['type'],
+                         'answer': qa['answer'],
+                         'doc_name': collection}
+                qas.append(newQA)
+        return qas
+    else:
+        for qa in mcd[doc_name].find():
+            newQA = {'question': qa['question'],
+                     'type': qa['type'],
+                     'answer': qa['answer'],
+                     'doc_name': doc_name}
+            qas.append(newQA)
+        return qas
+
+def DB_answer(mcd, sm: ScoreMatch, question: str, doc_name = None):
+    # record top score answers in anses
+    anses = []
+    top_score = 0
+
+    if doc_name == None:
+        # search in all collections
+        collections = [c for c in mcd.list_collection_names() if c != "users"]
+        for collection in collections:
+            for qa in mcd[collection].find():
+                print(qa.keys())
+                newQA = {'question': qa['question'],
+                         'type': qa['type'],
+                         'answer': qa['answer'],
+                         'doc_name': collection}
+
+                score = sm.score_q(question, newQA['question'])
+
+                # if we have found new score better than previous ones, we clear previous answers and replace it with a new array with one element which is the toppest score
+                if score > top_score:
+                    anses = [newQA]
+
+                # if we have multiple answers with same score, we make an array of them
+                if score == top_score:
+                    anses.append(newQA)

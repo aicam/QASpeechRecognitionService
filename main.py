@@ -18,19 +18,33 @@ hashKey = os.environ['HASH_KEY']
 ## create new score matching to provide scoring functions
 sm = ScoreMatch()
 
+## check admin user is created
+DB_initiate_users(mcd)
+
 ## authorization middleware
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
+    ## unprotected routes
+    if '/get/user/token' in str(request.url):
+        response = await call_next(request)
+        return response
+
     auth, username = request.headers.get("Authorization"), request.headers.get("Username")
-    print(request.url)
     if auth == None or username == None:
         return Response('Authorization failed!!', status_code= 401)
-    token = DB_get_user_token_middleware(mcd, hashKey, username)
-    # if token == "" or token != auth:
-    #     return create_http_message_response(False, "Authorization failed!!")
+    token, role = DB_get_user_token_middleware(mcd, hashKey, username)
+    if token == "" or token != auth:
+        return Response('Authorization failed!!', status_code= 401)
+
+    ## check add user done by admin
+    if '/add/user' in str(request.url):
+        if role != "admin":
+            return Response('Authorization failed!!', status_code=401)
+
     response = await call_next(request)
     return response
 
+## user functionalities
 @app.post("/add/user")
 async def add_user(user: User):
     return create_http_message_response(True, str(DB_add_user(mcd, user)))
@@ -43,7 +57,7 @@ async def get_user_token(user: User):
         return create_http_message_response(False, str("Authentication failed!!"))
     return create_http_message_response(True, token)
 
-
+# core functionalities
 @app.post("/send/question/")
 async def send_questions(question: QuestionInfo):
     if question.type == 'simple_question':
@@ -51,3 +65,9 @@ async def send_questions(question: QuestionInfo):
     else:
         sm.store_sentence(question.question)
     return create_http_message_response(True, str(DB_add_QA_document(mcd, question)))
+
+
+@app.get("/get/data/{doc_name}")
+async def get_all_docs(doc_name: Union[str, None] = None):
+    print(DB_get_all_QA(mcd, doc_name))
+    return DB_get_all_QA(mcd, doc_name)

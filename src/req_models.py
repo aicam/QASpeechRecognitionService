@@ -15,3 +15,4 @@ class User(BaseModel):
     username: str
     password: str
     role: Union[str, None] = "customer"
+
