@@ -75,6 +75,7 @@ def DB_answer(mcd, sm: ScoreMatch, question: str, doc_name = None):
     top_score = 0
 
     if doc_name == None:
+
         # search in all collections
         collections = [c for c in mcd.list_collection_names() if c != "users"]
         for collection in collections:
