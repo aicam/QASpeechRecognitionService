@@ -69,5 +69,8 @@ async def send_questions(question: QuestionInfo):
 
 @app.get("/get/data/{doc_name}")
 async def get_all_docs(doc_name: Union[str, None] = None):
-    print(DB_get_all_QA(mcd, doc_name))
     return DB_get_all_QA(mcd, doc_name)
+
+@app.post("/answer/")
+async def get_answer(askMe: AskMe):
+    return DB_answer(mcd, sm, askMe.question, askMe.doc_name)

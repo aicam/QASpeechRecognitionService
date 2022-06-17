@@ -35,13 +35,13 @@ class ScoreMatch:
 
     ## score sentence based on vocabs
     ## ordering is not important
-    def score_q(self, q1, q2):
-        q1_vocabs = q1.split(" ")
-        q2_vocabs = q2.split(" ")
+    def score_q(self, asked, saved_question):
+        q1_vocabs = asked.split(" ")
+        q2_vocabs = saved_question.split(" ")
         score = 0
 
         for vocab in q1_vocabs:
             if vocab in q2_vocabs:
                 score += self.score_vocab(vocab)
-
+        score /= len(saved_question.split(" "))
         return score

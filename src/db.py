@@ -73,25 +73,25 @@ def DB_answer(mcd, sm: ScoreMatch, question: str, doc_name = None):
     # record top score answers in anses
     anses = []
     top_score = 0
+    collections = [c for c in mcd.list_collection_names() if c != "users"] if doc_name == None else [doc_name]
+    for collection in collections:
+        for qa in mcd[collection].find():
+            print(qa.keys())
+            newQA = {'question': qa['question'],
+                     'type': qa['type'],
+                     'answer': qa['answer'],
+                     'doc_name': collection}
 
-    if doc_name == None:
+            score = sm.score_q(question, newQA['question'])
+            newQA.update({'score': score})
 
-        # search in all collections
-        collections = [c for c in mcd.list_collection_names() if c != "users"]
-        for collection in collections:
-            for qa in mcd[collection].find():
-                print(qa.keys())
-                newQA = {'question': qa['question'],
-                         'type': qa['type'],
-                         'answer': qa['answer'],
-                         'doc_name': collection}
+            # if we have multiple answers with same score, we make an array of them
+            if score == top_score:
+                anses.append(newQA)
 
-                score = sm.score_q(question, newQA['question'])
+            # if we have found new score better than previous ones, we clear previous answers and replace it with a new array with one element which is the toppest score
+            if score > top_score:
+                top_score = score
+                anses = [newQA]
 
-                # if we have found new score better than previous ones, we clear previous answers and replace it with a new array with one element which is the toppest score
-                if score > top_score:
-                    anses = [newQA]
-
-                # if we have multiple answers with same score, we make an array of them
-                if score == top_score:
-                    anses.append(newQA)
+    return anses

@@ -10,6 +10,9 @@ class QuestionInfo(BaseModel):
     doc_name: str
     id: Union[int, None] = None
 
+class AskMe(BaseModel):
+    doc_name: Union[str, None] = None
+    question: str
 
 class User(BaseModel):
     username: str
