@@ -62,5 +62,5 @@ Matching function is based on sum of scores of all vocabs in both questions, div
 by the length of question asked from the server.
 **Calculation of question and database questions score**
 
-$$ score = \sum_i^{common\_vocabs}{vocab<ins>score(vocab[i])} $$
+$$ score = \sum_i^{common-vocabs}{vocab-score(vocab[i])} $$
 
