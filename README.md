@@ -60,7 +60,12 @@ is `simple_question`). When a new question is asked, it will calculate the score
 matching of the question to all documents or the document specified in the request.
 Matching function is based on sum of scores of all vocabs in both questions, divided
 by the length of question asked from the server.
+Count of all words are stored in vocabs.json.
+<br>
 **Calculation of question and database questions score**
 
-$$ score = \sum_i^{common-vocabs}{vocab-score(vocab[i])} $$
+$$ score = \sum_i^{common-vocabs}{vocab-score(vocabs[i])} $$
 
+**Calculation of vocab score (vocab-score)**
+if not in vocab dictionary, score = 1 otherwise: <br>
+$$ vocab-score = 1 / count-of-vocab $$
