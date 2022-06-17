@@ -9,18 +9,18 @@ Endpoints are developed as:
 ```http request
 POST /add/user
 {
-    "username": <admin username>,
-    "password": <admin password>
+    "username": "<admin username>",
+    "password": "<admin password>"
 }
-add new user to database (requires admin role)
+"add new user to database (requires admin role)"
 
 POST /get/user/token
 {
-    "username": <username>,
-    "password": <password>,
-    "role": <role (optional)> default = customer
+    "username": "<username>",
+    "password": "<password>",
+    "role": "<role (optional)> default = customer"
 }
-return user token to be used on Authorization header (no auth check)
+"return user token to be used on Authorization header (no auth check)"
 ```
 Each user should add token and username to `Authorization` and `Username` headers respectively.
 
@@ -34,22 +34,22 @@ POST /send/question/
 {
     "question": "<question string>",
     "answer": "<answer string>",
-    "doc_name": <document name string>,
-    "type": <type of question (optional)> default = "simple_question"
+    "doc_name": "<document name string>",
+    "type": "<type of question (optional)> default = simple_question"
 }
 "add new question and answer to database"
 
 GET /get/data/<doc_name (optional)>
-return all questions and answers.
-if doc_name is mentioned, only questions in the specified collection are returned.
+"return all questions and answers."
+"if doc_name is mentioned, only questions in the specified collection are returned."
 
 POST /answer/
 {
-    "question": <question string>
-    "doc_name": <document name (optional)>
+    "question": "<question string>"
+    "doc_name": "<document name (optional)>"
 }
-return all questions with highest score in all collections or in
-collection (doc_name) specified.
+"return all questions with highest score in all collections or in
+collection (doc_name) specified."
 ```
 
 ## Scoring Function
