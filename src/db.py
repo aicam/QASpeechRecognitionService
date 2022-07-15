@@ -6,6 +6,7 @@ from src.req_models import *
 import hashlib
 
 from src.score_match import ScoreMatch
+from src.utils import AESCipher
 
 
 def create_connection(connectionString):
@@ -27,19 +28,17 @@ def DB_add_user(mcd, user: User):
     newUser = GetUserDict(user)
     return mcd["users"].insert_one(newUser).inserted_id
 
-def DB_get_user_token(mcd, hashKey: str, user: User):
+def DB_get_user_token(mcd, user: User, aes: AESCipher):
     userDB = mcd["users"].find_one(GetUserDict(user))
     if userDB == None:
         return False, ""
-    hashTxt = hashKey + user.username + user.password
-    return True, hashlib.md5(hashTxt.encode()).hexdigest()
+    return True, aes.encrypt(userDB["username"]).decode()
 
-def DB_get_user_token_middleware(mcd, hashKey: str, username: str):
+def DB_get_user_token_middleware(mcd, aes: AESCipher, username: str):
     userDB = mcd["users"].find_one({"username": username})
     if userDB == None:
         return ""
-    hashTxt = hashKey + userDB['username'] + userDB['password']
-    return hashlib.md5(hashTxt.encode()).hexdigest(), userDB['role']
+    return userDB['role']
 
 # QA tables
 def DB_add_QA_document(mcd, question: QuestionInfo):

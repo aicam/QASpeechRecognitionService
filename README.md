@@ -68,3 +68,5 @@ $$ score = \sum_i^{common-vocabs}{vocab-score(vocabs[i])} $$
 **Calculation of vocab score (vocab-score)**
 if not in vocab dictionary, score = 1 otherwise: <br>
 $$ vocab-score = 1 / count-of-vocab $$
+
+# Dependency Error

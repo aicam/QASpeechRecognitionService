@@ -16,3 +16,4 @@ services:
       - HASH_KEY=finalproject
       - ADMIN_USERNAME=mamad
       - ADMIN_PASSWORD=1234
+      - SERVER_KEY=mamad
